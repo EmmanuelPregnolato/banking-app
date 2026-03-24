@@ -3,6 +3,7 @@ package net.javaguides.banking.service.impl;
 import net.javaguides.banking.dto.AccountDto;
 import net.javaguides.banking.entity.Account;
 import net.javaguides.banking.entity.mapper.AccountMapper;
+import net.javaguides.banking.exception.AccountException;
 import net.javaguides.banking.repository.AccountRepository;
 import net.javaguides.banking.service.AccountService;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDto getAccount(Long id) {
-        Account account = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("Account not found"));
+        Account account = accountRepository.findById(id).orElseThrow(() -> new AccountException("Account not found"));
         return AccountMapper.mapToAccountDto(account);
     }
     @Override
@@ -32,14 +33,14 @@ public class AccountServiceImpl implements AccountService {
     }
     @Override
     public AccountDto deleteAccount(Long id) {
-        Account account = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("Account not found"));
+        Account account = accountRepository.findById(id).orElseThrow(() -> new AccountException("Account not found"));
         accountRepository.delete(account);
         return AccountMapper.mapToAccountDto(account);
     }
 
     @Override
     public AccountDto deposit(Long id, double amount) {
-        Account account = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("Account not found"));
+        Account account = accountRepository.findById(id).orElseThrow(() -> new AccountException("Account not found"));
         account.setBalance(account.getBalance() + amount);
         Account updatedAccount = accountRepository.save(account);
         return AccountMapper.mapToAccountDto(updatedAccount);
@@ -47,9 +48,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDto withdraw(Long id, double amount) {
-        Account account = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("Account not found"));
+        Account account = accountRepository.findById(id).orElseThrow(() -> new AccountException("Account not found"));
         if (account.getBalance() < amount) {
-            throw new RuntimeException("Insufficient funds");
+            throw new AccountException("Insufficient funds");
         }
         account.setBalance(account.getBalance() - amount);
         Account updatedAccount = accountRepository.save(account);
