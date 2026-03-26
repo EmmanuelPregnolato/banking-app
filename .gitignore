@@ -32,5 +32,8 @@ replay_pid*
 # Maven
 target/
 
+# VSCode workspace files
+*.code-workspace
+
 # macOS
 .DS_Store
